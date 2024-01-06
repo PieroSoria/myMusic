@@ -1,0 +1,331 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:my_music/db/function/funciones_sql.dart';
+import 'package:my_music/interface/models/generomodel.dart';
+import 'package:my_music/interface/models/songs.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+
+import '../interface/models/albummodel.dart';
+import '../interface/models/artistamodel.dart';
+import '../interface/models/playlistmodel.dart';
+
+class PlayerController extends GetxController {
+  final audioquery = OnAudioQuery();
+  final audioPlayer = AudioPlayer();
+
+  final funciones = FuncionesSQL();
+  Rx<Uint8List?> artworkImage = Rx<Uint8List?>(null);
+  RxList<Cancion> canciones = <Cancion>[].obs;
+  RxBool isPlaying = false.obs;
+  RxBool reproduccion = false.obs;
+  var duration = ''.obs;
+  var position = ''.obs;
+  var max = 0.0.obs;
+  var value = 0.0.obs;
+
+  var currentSongDisplayName = ''.obs;
+  var currentSongartis = ''.obs;
+  var currentSongid = 0.obs;
+  var currentSongalbum = ''.obs;
+  var currentSonggenero = ''.obs;
+  var currentSongsize = ''.obs;
+  var currentSonghora = ''.obs;
+  var currentSongfecha = ''.obs;
+  var currentSongruta = ''.obs;
+  var currentSonguri = ''.obs;
+  var currentduration = ''.obs;
+  var currentimagen = ''.obs;
+  var currentfavorito = false.obs;
+  var isRepeatMode = false.obs;
+  var isRandomMode = false.obs;
+
+  RxList<Album> listalbum = <Album>[].obs;
+  RxList<ArtistaM> listartist = <ArtistaM>[].obs;
+  RxList<Genero> listgenero = <Genero>[].obs;
+  RxList<PlayList> listplaylist = <PlayList>[].obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    audioPlayer.currentIndexStream.listen((index) {
+      if (index != null && index >= 0 && index < canciones.length) {
+        actualcancion(canciones[index]);
+      }
+    });
+    audioPlayer.playerStateStream.listen((playerState) {
+      if (!audioPlayer.playing) {
+        isPlaying(false);
+      } else {
+        isPlaying(true);
+      }
+    });
+  }
+
+  Future<bool> cargarcanciones() async {
+    final data = await audioquery.querySongs(
+      ignoreCase: true,
+      orderType: OrderType.ASC_OR_SMALLER,
+      sortType: null,
+      uriType: UriType.EXTERNAL,
+    );
+    // songs = data;
+    try {
+      for (var song in data) {
+        final datamap = Cancion(
+            id: song.id.toString(),
+            displayNameWOExt: song.displayNameWOExt,
+            displayName: song.displayName,
+            artista: song.artist.toString(),
+            album: song.album.toString(),
+            genero: song.genre.toString(),
+            datos: song.size.toString(),
+            hora: song.duration.toString(),
+            fecha: song.dateModified.toString(),
+            ruta: song.data,
+            uri: song.uri.toString(),
+            imagen: '',
+            duration: song.duration.toString(),
+            favorito: 'false');
+        await funciones.insertarcanciones(datamap);
+      }
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  Future<void> mostrarcanciones() async {
+    bool respon = await cargarcanciones();
+    if (respon) {
+      funciones.mostrarsongdatabase().then((data) =>
+          canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+    } else {
+      return;
+    }
+  }
+
+  Future<void> mostrarcanciones2() async {
+    canciones.clear();
+    funciones.mostrarsongdatabase().then((data) =>
+        canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  }
+
+  updatePosition() {
+    audioPlayer.durationStream.listen((d) {
+      duration.value = formatDuration(d);
+      max.value = d!.inSeconds.toDouble();
+    });
+    audioPlayer.positionStream.listen((p) {
+      position.value = formatDuration(p);
+      value.value = p.inSeconds.toDouble();
+    });
+  }
+
+  String formatDuration(Duration? duration) {
+    if (duration == null) {
+      return '00:00';
+    }
+
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return '$twoDigitMinutes:$twoDigitSeconds';
+  }
+
+  changeDurationToSeconds(seconds) {
+    var duration = Duration(seconds: seconds);
+    audioPlayer.seek(duration);
+  }
+
+  void siguientecancion(int currentSongId) {
+    var currentindex =
+        canciones.indexWhere((song) => song.id == currentSongid.toString());
+    var nextindex = currentindex + 1;
+    if (nextindex >= canciones.length) {
+      nextindex = 0;
+    }
+    var nextsong = canciones[nextindex];
+    playsong(nextsong.uri, nextindex, nextsong.id, nextsong.displayNameWOExt,
+        canciones);
+  }
+
+  void anteriorcancion(int currentsongid) {
+    var actualindex =
+        canciones.indexWhere((song) => song.id == currentsongid.toString());
+    var anteriorindex = actualindex - 1;
+    if (anteriorindex < 0) {
+      anteriorindex = canciones.length - 1;
+    }
+    var anteriorcancion = canciones[anteriorindex];
+    playsong(anteriorcancion.uri, anteriorindex, anteriorcancion.id,
+        anteriorcancion.displayNameWOExt, canciones);
+  }
+
+  toggleRepeatMode() {
+    isRepeatMode.value = !isRepeatMode.value;
+    audioPlayer.setLoopMode(isRepeatMode.value ? LoopMode.one : LoopMode.off);
+  }
+
+  void toggleRandomMode() {
+    isRandomMode.value = !isRandomMode.value;
+    if (isRandomMode.value) {
+      audioPlayer.setShuffleModeEnabled(true);
+      audioPlayer.shuffle();
+    } else {
+      audioPlayer.setShuffleModeEnabled(false);
+    }
+  }
+
+  playsong(String? uri, index, id, titulo, List<Cancion> data) {
+    actualcancion(data[index]);
+    try {
+      audioPlayer.setAudioSource(
+        ConcatenatingAudioSource(
+          children: data
+              .map((song) => AudioSource.uri(
+                    Uri.parse(song.uri.toString()),
+                    tag: MediaItem(
+                      id: song.id.toString(),
+                      title: song.displayNameWOExt.toString(),
+                      artist: song.artista,
+                      artUri: Uri.parse(song.uri.toString()),
+                    ),
+                  ))
+              .toList(),
+          shuffleOrder: DefaultShuffleOrder(),
+        ),
+        initialIndex: index,
+      );
+      audioPlayer.play();
+      isPlaying(true);
+      reproduccion(true);
+      updatePosition();
+      isfavoritos(id);
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void actualcancion(Cancion song) {
+    currentSongDisplayName.value = song.displayNameWOExt;
+    currentSongartis.value = song.artista.toString();
+    currentSongid.value = int.parse(song.id);
+    currentSongalbum.value = song.album;
+    currentSonggenero.value = song.genero;
+    currentSongsize.value = song.datos.toString();
+    currentSonghora.value = song.duration.toString();
+    currentSongfecha.value = song.fecha.toString();
+    currentSongruta.value = song.ruta;
+    currentSonguri.value = song.uri.toString();
+    currentimagen.value = song.imagen;
+    currentfavorito.value = song.favorito == "true" ? true : false;
+  }
+
+  void togglePlayback() {
+    if (audioPlayer.playing) {
+      audioPlayer.pause();
+      isPlaying(false);
+    } else {
+      audioPlayer.play();
+      isPlaying(true);
+    }
+  }
+
+  Future<void> loadArtworkImage() async {
+    final currentSongId = currentSongid.value;
+    OnAudioQuery()
+        .queryArtwork(currentSongId, ArtworkType.AUDIO)
+        .then((artwork) => artworkImage.value = artwork);
+  }
+
+  void togglefavorites(id) async {
+    bool result = await funciones.insertaroremoverfavoritos(id);
+    if (result) {
+      currentfavorito(true);
+      Get.snackbar("Exito", "Se registro en la lista de canciones favoritas",
+          colorText: Colors.white);
+    } else {
+      currentfavorito(false);
+      Get.snackbar("Exito", "Se elimino de la lista de canciones favoritas",
+          colorText: Colors.white);
+    }
+  }
+
+  void isfavoritos(String id) async {
+    String result = await funciones.fillfavoritos(id);
+    debugPrint(result.toString());
+    if (result == "true") {
+      currentfavorito(true);
+    } else {
+      currentfavorito(false);
+    }
+  }
+
+  void cancionesfavoritas() async {
+    canciones.clear();
+    funciones.cancionesfavoritas().then((data) =>
+        canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  }
+
+  Future<void> cargadealbumes() async {
+    audioquery
+        .queryAlbums(
+          sortType: AlbumSortType.ALBUM,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+          ignoreCase: null,
+        )
+        .then((data) => listalbum.assignAll(
+            data.map((e) => Album(id: e.id, album: e.album)).toList()));
+    // listalbum = data;
+  }
+
+  Future<void> cargardeartista() async {
+    audioquery
+        .queryArtists(
+          sortType: ArtistSortType.ARTIST,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+          ignoreCase: null,
+        )
+        .then((data) => listartist.assignAll(
+            data.map((e) => ArtistaM(id: e.id, artista: e.artist)).toList()));
+  }
+
+  Future<void> cargadegenero() async {
+    audioquery
+        .queryGenres(
+          sortType: GenreSortType.GENRE,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+          ignoreCase: null,
+        )
+        .then((data) => listgenero.assignAll(
+            data.map((e) => Genero(id: e.id, genero: e.genre)).toList()));
+  }
+
+  Future<void> cargarsongtype(String id, String type) async {
+    if (type == "album") {
+    } else if (type == "artista") {
+    } else {}
+  }
+
+  Future<void> cargarlistadeplaylist() async {
+    funciones.cargarplaylist().then((data) =>
+        listplaylist.assignAll(data.map((e) => PlayList.fromMap(e)).toList()));
+  }
+
+  Future<void> createplaylist(String name) async {
+    funciones.crearplaylist(name).then((value) => value
+        ? Get.snackbar("Exito", "Se creo una lista de playlist",
+            colorText: Colors.white)
+        : Get.snackbar("Opps!!", "No se registro su playlist",
+            colorText: Colors.white));
+  }
+}
