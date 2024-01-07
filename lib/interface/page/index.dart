@@ -106,11 +106,17 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
                     if (selectMenu == sideMenustile.first) {
                       _currentWidget = const Music();
                     } else if (selectMenu == sideMenustile[1]) {
-                      _currentWidget = const ListAAG(listtype: 'Album',);
+                      _currentWidget = const ListAAG(
+                        listtype: 'album',
+                      );
                     } else if (selectMenu == sideMenustile[2]) {
-                      _currentWidget = const ListAAG(listtype: 'Artista',);
+                      _currentWidget = const ListAAG(
+                        listtype: 'artista',
+                      );
                     } else if (selectMenu == sideMenustile[3]) {
-                      _currentWidget = const ListAAG(listtype: 'Genero',);
+                      _currentWidget = const ListAAG(
+                        listtype: 'genero',
+                      );
                     }
                   });
                   setState(() {
@@ -127,7 +133,7 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
                   });
                   setState(() {
                     selectMenu3 = menu;
-                    if(selectMenu3 == sideMenustile3.first){
+                    if (selectMenu3 == sideMenustile3.first) {
                       _currentWidget = const ConfigApp();
                     }
                   });
@@ -161,9 +167,9 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
               top: 16,
               child: MenuBtn(
                 riveonInit: (artboard) {
-                  StateMachineController controller = RiveUtils.getRiveController(
-                      artboard,
-                      stateMachineName: "State Machine");
+                  StateMachineController controller =
+                      RiveUtils.getRiveController(artboard,
+                          stateMachineName: "State Machine");
                   isSideBarClose = controller.findSMI("isOpen") as SMIBool;
                   isSideBarClose.value = true;
                 },

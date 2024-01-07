@@ -100,4 +100,11 @@ class FuncionesSQL {
         await mydb!.delete("listadeplaylist", where: "id = ?", whereArgs: [id]);
     return rep > 0;
   }
+
+  Future<bool> renameplaylist(String id, String nombre) async {
+    Database? mydb = await dbcre.db;
+    int rep = await mydb!.rawUpdate(
+        "UPDATE listadeplaylist SET nombre = $nombre WHERE id = $id");
+    return rep > 0;
+  }
 }
