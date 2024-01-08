@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_music/controller/player_controller.dart';
 
+import '../../components/bottomsheet_opcion_playlist.dart';
+
 class PlayListMusic extends StatefulWidget {
   const PlayListMusic({super.key});
 
@@ -10,6 +12,7 @@ class PlayListMusic extends StatefulWidget {
 }
 
 class _PlayListMusicState extends State<PlayListMusic> {
+  final listtext = TextEditingController();
   final controller = Get.put(PlayerController());
   @override
   void initState() {
@@ -19,6 +22,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
@@ -40,10 +44,30 @@ class _PlayListMusicState extends State<PlayListMusic> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
+                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                     child: TextField(
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: "Poppins",
+                      ),
+                      controller: listtext,
+                      decoration: InputDecoration(
+                        labelText: "Ingrese una nueva lista",
+                        labelStyle: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                        ),
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
                       onSubmitted: (value) {
                         controller.createplaylist(value);
+                        setState(() {
+                          listtext.text = "";
+                        });
                       },
                     ),
                   ),
@@ -52,7 +76,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
             ),
           ),
           Positioned(
-            top: 120,
+            top: 230,
             left: 0,
             right: 0,
             bottom: 0,
@@ -63,8 +87,31 @@ class _PlayListMusicState extends State<PlayListMusic> {
                   itemCount: controller.listplaylist.length,
                   itemBuilder: (_, index) {
                     return Card(
+                      color: Colors.transparent,
                       child: ListTile(
-                        title: Text(controller.listplaylist[index].nombre!),
+                        title: Text(
+                          controller.listplaylist[index].nombre!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Poppins",
+                          ),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                context: context,
+                                backgroundColor:
+                                    const Color.fromARGB(131, 82, 78, 78),
+                                builder: (context) {
+                                  return const BotomSheetPlaylist();
+                                });
+                          },
+                          icon: const Icon(
+                            Icons.more_vert_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () {},
                       ),
                     );
                   },

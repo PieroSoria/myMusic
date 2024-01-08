@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_music/db/database.dart';
 import 'package:my_music/interface/models/songs.dart';
@@ -89,7 +90,7 @@ class FuncionesSQL {
   Future<bool> crearplaylist(String nombre) async {
     Database? mydb = await dbcre.db;
     Digest id = sha256.convert(utf8.encode(nombre));
-    var values = {'id': id, 'nombre': nombre};
+    var values = {'id': id.toString(), 'nombre': nombre, 'listmusic': ""};
     int rep = await mydb!.insert("listadeplaylist", values);
     return rep > 0;
   }
@@ -106,5 +107,52 @@ class FuncionesSQL {
     int rep = await mydb!.rawUpdate(
         "UPDATE listadeplaylist SET nombre = $nombre WHERE id = $id");
     return rep > 0;
+  }
+
+  //funciones de musica de playlist
+
+  Future<List<String>> musicadeplaylist(String id) async {
+    Database? mydb = await dbcre.db;
+    final data = await mydb!.query("listadeplaylist",
+        columns: ['listmusic'], where: 'id = ?', whereArgs: [id]);
+    List<String> respon = data[0]['listmusic'].toString().split('/');
+    return respon;
+  }
+
+  Future<List<Map<String, dynamic>>> cargarmusicdelaplaylist(
+      List<String> datos) async {
+    Database? mydb = await dbcre.db;
+    final data = await mydb!.query(
+      "canciones",
+      where: 'id IN (${List.filled(datos.length, '?').join(', ')})',
+      whereArgs: datos,
+    );
+    return data;
+  }
+
+  Future<bool> insertarcancionenelplaylist(
+      String idplaylist, String idsong) async {
+    Database? mydb = await dbcre.db;
+    int rep = await mydb!.rawUpdate(
+      "UPDATE listadeplaylist SET listmusic = ? WHERE id = ?",
+      ['$idsong/', idplaylist],
+    );
+    return rep > 0;
+  }
+
+  Future<bool> removercancionesenelplaylist(
+      String idplaylist, String idsong) async {
+    Database? mydb = await dbcre.db;
+    List<String> result = await musicadeplaylist(idplaylist);
+    bool respon = result.remove(idsong);
+    if (respon) {
+      String nuevaLista = result.join('/');
+      await mydb!.rawUpdate(
+          "UPDATE listadeplaylist SET listmusic = ? WHERE id = ?",
+          [nuevaLista, idplaylist]);
+      return true;
+    } else {
+      return false;
+    }
   }
 }

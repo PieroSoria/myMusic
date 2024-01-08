@@ -322,10 +322,24 @@ class PlayerController extends GetxController {
   }
 
   Future<void> createplaylist(String name) async {
-    funciones.crearplaylist(name).then((value) => value
+    await funciones.crearplaylist(name).then((value) => value
         ? Get.snackbar("Exito", "Se creo una lista de playlist",
             colorText: Colors.white)
         : Get.snackbar("Opps!!", "No se registro su playlist",
             colorText: Colors.white));
+    await cargarlistadeplaylist();
   }
+
+  Future<void> removerplaylist(String id, String nombreplaylist) async {
+    funciones.removerplaylist(id).then((value) => value
+        ? Get.snackbar(
+            "Exito", "Se elimino el playlist con el nombre de $nombreplaylist",
+            colorText: Colors.white)
+        : Get.snackbar(
+            "Opps!", "No se pudo eliminar el playlist $nombreplaylist",
+            colorText: Colors.white));
+  }
+
+  // Get.snackbar("Opps!", "No se encontro la cancion que desea eliminar",
+  //         colorText: Colors.white);
 }

@@ -88,6 +88,7 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
     return GestureDetector(
       onHorizontalDragUpdate: handleSwipeRightToLeft,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromARGB(0, 10, 7, 49),
         body: Stack(
           children: [
