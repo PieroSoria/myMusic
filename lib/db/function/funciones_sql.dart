@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_music/db/database.dart';
 import 'package:my_music/interface/models/songs.dart';
@@ -13,12 +12,12 @@ class FuncionesSQL {
 
   // funciones generales
 
-  Future<bool> capturarimagen(String id) async {
+  Future<bool> capturarimagendatabase(String id) async {
     Database? mydb = await dbcre.db;
     final picker = ImagePicker();
     XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
     int rep = await mydb!.rawUpdate(
-        'UPDATE canciones SET imagen = ${imagen!.path} WHERE id = $id');
+        "UPDATE canciones SET imagen = ? WHERE id = ?", [imagen!.path, id]);
     return rep > 0;
   }
 
@@ -34,6 +33,12 @@ class FuncionesSQL {
     } else {
       return;
     }
+  }
+
+  Future<bool> eliminarcanciondedb(String id) async {
+    Database? mydb = await dbcre.db;
+    int rep = await mydb!.delete("canciones", where: "id = ?", whereArgs: [id]);
+    return rep > 0;
   }
 
   Future<List<Map<String, dynamic>>> mostrarsongdatabase() async {
@@ -105,7 +110,7 @@ class FuncionesSQL {
   Future<bool> renameplaylist(String id, String nombre) async {
     Database? mydb = await dbcre.db;
     int rep = await mydb!.rawUpdate(
-        "UPDATE listadeplaylist SET nombre = $nombre WHERE id = $id");
+        "UPDATE listadeplaylist SET nombre = ? WHERE id = ?", [nombre, id]);
     return rep > 0;
   }
 

@@ -17,10 +17,13 @@ class _HomeState extends State<Home> {
     var perm = await Permission.storage.request();
     var perm2 = await Permission.audio.request();
     if (perm.isGranted || perm2.isGranted) {
-      controller.mostrarcanciones();
-      Get.toNamed(Routes.inicio);
+      controller.cargarcanciones().then((value) => value
+          ? Get.toNamed(Routes.inicio)
+          : Get.snackbar("Cargarndo", "Espere un momento",
+              colorText: Colors.white));
     } else {
-      Get.snackbar("Error", "No se concedio el permiso");
+      Get.snackbar("Error", "No se concedio el permiso",
+          colorText: Colors.white);
     }
   }
 

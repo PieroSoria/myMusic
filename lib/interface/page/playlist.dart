@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_music/controller/player_controller.dart';
+import 'package:my_music/interface/page/playlist_screen.dart';
 
 import '../../components/bottomsheet_opcion_playlist.dart';
 
@@ -103,7 +104,11 @@ class _PlayListMusicState extends State<PlayListMusic> {
                                 backgroundColor:
                                     const Color.fromARGB(131, 82, 78, 78),
                                 builder: (context) {
-                                  return const BotomSheetPlaylist();
+                                  return BotomSheetPlaylist(
+                                    id: controller.listplaylist[index].id!,
+                                    nombre:
+                                        controller.listplaylist[index].nombre!,
+                                  );
                                 });
                           },
                           icon: const Icon(
@@ -111,7 +116,14 @@ class _PlayListMusicState extends State<PlayListMusic> {
                             color: Colors.white,
                           ),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(
+                              () => ScreenPlaylist(
+                                    nombre:
+                                        controller.listplaylist[index].nombre!,
+                                  ),
+                              transition: Transition.rightToLeft);
+                        },
                       ),
                     );
                   },

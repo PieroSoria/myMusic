@@ -47,6 +47,32 @@ class _ConfigAppState extends State<ConfigApp> {
                     child: Obx(
                       () => ListTile(
                         title: const Text(
+                          "Buscar Canciones",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Poppins",
+                            fontSize: 20,
+                          ),
+                        ),
+                        subtitle: controller.cargandosong.value
+                            ? const CircularProgressIndicator()
+                            : const Text(
+                                "Escuchar",
+                                style: TextStyle(
+                                    fontFamily: "Poppins", color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                        onTap: () {
+                          controller.loadsong();
+                        },
+                      ),
+                    ),
+                  ),
+                  Card(
+                    color: const Color.fromARGB(0, 119, 117, 117),
+                    child: Obx(
+                      () => ListTile(
+                        title: const Text(
                           "fondo de pantalla",
                           style: TextStyle(
                               color: Colors.white,

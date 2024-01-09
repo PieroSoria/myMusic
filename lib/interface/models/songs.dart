@@ -10,7 +10,7 @@ class Cancion {
   String fecha;
   String ruta;
   String uri;
-  String duration;
+
   String imagen;
   String favorito;
 
@@ -26,7 +26,6 @@ class Cancion {
       required this.fecha,
       required this.ruta,
       required this.uri,
-      required this.duration,
       required this.imagen,
       required this.favorito});
   Map<String, dynamic> tomap3() {
@@ -42,7 +41,6 @@ class Cancion {
       'fecha': fecha,
       'ruta': ruta,
       'uri': uri,
-      'duration': duration,
       'imagen': imagen,
       'favorito': favorito
     };
@@ -61,7 +59,6 @@ class Cancion {
         fecha: map3['fecha'] ?? '',
         ruta: map3['ruta'] ?? '',
         uri: map3['uri'] ?? '',
-        duration: map3['duration'] ?? '',
         imagen: map3['imagen'] ?? '',
         favorito: map3['favorito'] ?? '');
   }

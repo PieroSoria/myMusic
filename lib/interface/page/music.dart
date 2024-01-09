@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_music/components/bottomsheet_opcion_song.dart';
 import 'package:my_music/controller/controller_settings.dart';
 import 'package:my_music/controller/player_controller.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -53,7 +54,7 @@ class _MusicState extends State<Music> {
             left: 0,
             child: SizedBox(
               child: FutureBuilder(
-                  future: controller.mostrarcanciones2(),
+                  future: controller.mostrarcanciones(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -149,6 +150,28 @@ class _MusicState extends State<Music> {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                   style: const TextStyle(color: Colors.white),
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(20)),
+                                        ),
+                                        backgroundColor: const Color.fromARGB(
+                                            0, 194, 193, 193),
+                                        builder: (context) {
+                                          return BotomSheetSong(
+                                            cancion:
+                                                controller.canciones[index],
+                                          );
+                                        });
+                                  },
+                                  icon: const Icon(
+                                    Icons.more_vert_outlined,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 onTap: () {
                                   controller.playsong(

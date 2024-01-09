@@ -66,13 +66,13 @@ class PlayerController extends GetxController {
   }
 
   Future<bool> cargarcanciones() async {
-    final data = await audioquery.querySongs(
+    final datas = await audioquery.querySongs(
       ignoreCase: true,
       orderType: OrderType.ASC_OR_SMALLER,
       sortType: null,
       uriType: UriType.EXTERNAL,
     );
-    // songs = data;
+    final data = datas.where((e) => e.duration != null);
     try {
       for (var song in data) {
         final datamap = Cancion(
@@ -88,7 +88,6 @@ class PlayerController extends GetxController {
             ruta: song.data,
             uri: song.uri.toString(),
             imagen: '',
-            duration: song.duration.toString(),
             favorito: 'false');
         await funciones.insertarcanciones(datamap);
       }
@@ -100,19 +99,17 @@ class PlayerController extends GetxController {
   }
 
   Future<void> mostrarcanciones() async {
-    bool respon = await cargarcanciones();
-    if (respon) {
-      funciones.mostrarsongdatabase().then((data) =>
-          canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
-    } else {
-      return;
-    }
-  }
-
-  Future<void> mostrarcanciones2() async {
     canciones.clear();
     funciones.mostrarsongdatabase().then((data) =>
         canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  }
+
+  Future<void> eliminarcanciones(String id) async {
+    funciones.eliminarcanciondedb(id).then((value) => value
+        ? Get.snackbar("Exito", "La cancion se elimino correctamente",
+            colorText: Colors.white)
+        : Get.snackbar("Opps!!", "No se borro la cancion",
+            colorText: Colors.white));
   }
 
   updatePosition() {
@@ -219,7 +216,7 @@ class PlayerController extends GetxController {
     currentSongalbum.value = song.album;
     currentSonggenero.value = song.genero;
     currentSongsize.value = song.datos.toString();
-    currentSonghora.value = song.duration.toString();
+    currentSonghora.value = song.hora.toString();
     currentSongfecha.value = song.fecha.toString();
     currentSongruta.value = song.ruta;
     currentSonguri.value = song.uri.toString();
@@ -322,24 +319,39 @@ class PlayerController extends GetxController {
   }
 
   Future<void> createplaylist(String name) async {
-    await funciones.crearplaylist(name).then((value) => value
+    funciones.crearplaylist(name).then((value) => value
         ? Get.snackbar("Exito", "Se creo una lista de playlist",
             colorText: Colors.white)
         : Get.snackbar("Opps!!", "No se registro su playlist",
             colorText: Colors.white));
-    await cargarlistadeplaylist();
+    cargarlistadeplaylist();
   }
 
   Future<void> removerplaylist(String id, String nombreplaylist) async {
-    funciones.removerplaylist(id).then((value) => value
+    await funciones.removerplaylist(id).then((value) => value
         ? Get.snackbar(
             "Exito", "Se elimino el playlist con el nombre de $nombreplaylist",
             colorText: Colors.white)
         : Get.snackbar(
             "Opps!", "No se pudo eliminar el playlist $nombreplaylist",
             colorText: Colors.white));
+    await cargarlistadeplaylist();
   }
 
-  // Get.snackbar("Opps!", "No se encontro la cancion que desea eliminar",
-  //         colorText: Colors.white);
+  Future<void> renameplaylist(String id, String newname) async {
+    await funciones.renameplaylist(id, newname).then((value) => value
+        ? Get.snackbar("Exito", "Se cambio el nombre a $newname",
+            colorText: Colors.white)
+        : Get.snackbar("Opp!", "Ocurrio un problema", colorText: Colors.white));
+    await cargarlistadeplaylist();
+  }
+
+  Future<void> capturarimagen(String id) async {
+    funciones.capturarimagendatabase(id).then((value) => value
+        ? Get.snackbar("Exito", "La imagen se guardo satisfactoriamente",
+            colorText: Colors.white)
+        : Get.snackbar("Opps!", "No se cargo ninguna imagen",
+            colorText: Colors.white));
+    mostrarcanciones();
+  }
 }

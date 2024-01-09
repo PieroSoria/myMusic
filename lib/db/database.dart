@@ -23,7 +23,7 @@ class BaseSQL {
 
   _createDB(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS listadeplaylist(id TEXT PRIMARY KEY, nombre TEXT, listmusic TEXT)");
+        "CREATE TABLE IF NOT EXISTS listadeplaylist (id TEXT PRIMARY KEY, nombre TEXT, listmusic TEXT)");
     // await db.execute(
     //     "CREATE TABLE IF NOT EXISTS listademusic(id TEXT PRIMARY KEY, playlist TEXT, nombre TEXT)");
     await db.execute(

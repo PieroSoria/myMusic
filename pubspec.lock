@@ -552,6 +552,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.7"
+  ringtone_set:
+    dependency: "direct main"
+    description:
+      name: ringtone_set
+      sha256: d91ca5d655df8e04d1ecc3a14446a3a5944dece9314e55a1cdac171752ffa57b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   rive:
     dependency: "direct main"
     description:

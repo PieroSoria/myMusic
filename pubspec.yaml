@@ -50,6 +50,7 @@ dependencies:
   sqflite: ^2.3.0
   just_audio_background: ^0.0.1-beta.11
   crypto: ^3.0.3
+  ringtone_set: ^0.0.3
 
 dev_dependencies:
   flutter_test:
