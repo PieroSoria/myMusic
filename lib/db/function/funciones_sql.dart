@@ -140,7 +140,7 @@ class FuncionesSQL {
     final picker = ImagePicker();
     XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
     int rep = await mydb!.rawUpdate(
-        "UPDATE canciones SET imagen = ? WHERE id = ?", [imagen!.path, id]);
+        "UPDATE listadeplaylist SET imagen = ? WHERE id = ?", [imagen!.path, id]);
     controller.actualizarimagendeplaylist(index, imagen.path);
     return rep > 0;
   }

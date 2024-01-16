@@ -54,7 +54,7 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: Expanded(
+              child: SizedBox(
                 child: FutureBuilder(
                     future:
                         controller.cargarplaylistselect(widget.playList.id!),
@@ -171,7 +171,8 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
                                         builder: (context) {
                                           return BotomSheetSong(
                                             cancion:
-                                                controller.canciones[index], index: index,
+                                                controller.canciones[index],
+                                            index: index,
                                           );
                                         },
                                       );

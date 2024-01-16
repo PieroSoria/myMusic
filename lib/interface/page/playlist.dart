@@ -8,7 +8,9 @@ import 'package:my_music/interface/page/playlist_screen.dart';
 import '../../components/bottomsheet_opcion_playlist.dart';
 
 class PlayListMusic extends StatefulWidget {
-  const PlayListMusic({super.key});
+  final bool seleccionl;
+  final String? idsong;
+  const PlayListMusic({super.key, required this.seleccionl, this.idsong});
 
   @override
   State<PlayListMusic> createState() => _PlayListMusicState();
@@ -134,11 +136,16 @@ class _PlayListMusicState extends State<PlayListMusic> {
                           ),
                         ),
                         onTap: () {
-                          Get.to(
-                              () => ScreenPlaylist(
-                                    playList: controller.listplaylist[index],
-                                  ),
-                              transition: Transition.rightToLeft);
+                          widget.seleccionl
+                              ? Get.to(
+                                  () => ScreenPlaylist(
+                                        playList:
+                                            controller.listplaylist[index],
+                                      ),
+                                  transition: Transition.rightToLeft)
+                              : controller.insertcancionesplaylist(
+                                  controller.listplaylist[index].id!,
+                                  widget.idsong!);
                         },
                       ),
                     );

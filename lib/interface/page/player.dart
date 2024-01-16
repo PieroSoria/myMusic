@@ -4,6 +4,7 @@ import 'package:my_music/components/stack2.dart';
 import 'package:my_music/controller/controller_settings.dart';
 import 'package:my_music/controller/player_controller.dart';
 
+import '../../anuncion/anuncion.dart';
 import '../../components/bottomsheet_opcion_song.dart';
 import '../../components/fondodeplay.dart';
 import '../../components/opcion_button_player.dart';
@@ -113,7 +114,8 @@ class _PlayerState extends State<Player> {
                       controller2.stackmode.value
                           ? const Stack2()
                           : const Stack1(),
-                      const OpcionButton()
+                      const OpcionButton(),
+                      const Anuncio(),
                     ],
                   ),
                 ),

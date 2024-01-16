@@ -7,6 +7,7 @@ import 'package:my_music/components/opcioniconbutton.dart';
 import 'package:my_music/controller/player_controller.dart';
 
 import 'package:my_music/interface/models/songs.dart';
+import 'package:my_music/interface/page/playlist.dart';
 import 'package:ringtone_set/ringtone_set.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -79,7 +80,10 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
                     ),
                   ),
                   OpcionIconButton(
-                    onfunction: () {},
+                    onfunction: () {
+                      Get.to(() => PlayListMusic(seleccionl: false,idsong: widget.cancion.id,),
+                          transition: Transition.fadeIn);
+                    },
                     titulo: "Agregar a",
                     iconbtn: const Icon(
                       Icons.add_box_outlined,

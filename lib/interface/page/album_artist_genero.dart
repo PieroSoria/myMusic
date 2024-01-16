@@ -46,9 +46,9 @@ class _ListAAGState extends State<ListAAG> {
             child: Container(
               decoration: const BoxDecoration(),
               child: FutureBuilder(
-                future: widget.listtype == "Album"
+                future: widget.listtype == "album"
                     ? controller.cargadealbumes()
-                    : widget.listtype == "Artista"
+                    : widget.listtype == "artista"
                         ? controller.cargardeartista()
                         : controller.cargadegenero(),
                 builder: (context, snapshot) {

@@ -123,7 +123,9 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
                   setState(() {
                     selectMenu2 = menu;
                     if (selectMenu2 == sideMenustile2.first) {
-                      _currentWidget = const PlayListMusic();
+                      _currentWidget = const PlayListMusic(
+                        seleccionl: true,
+                      );
                     } else if (selectMenu2 == sideMenustile2[1]) {
                       _currentWidget = const Favoritos();
                     } else if (selectMenu2 == sideMenustile2[2]) {
