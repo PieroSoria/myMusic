@@ -10,9 +10,10 @@ class Cancion {
   String fecha;
   String ruta;
   String uri;
-
   String imagen;
   String favorito;
+  String ver;
+  double conteo;
 
   Cancion(
       {required this.id,
@@ -27,7 +28,9 @@ class Cancion {
       required this.ruta,
       required this.uri,
       required this.imagen,
-      required this.favorito});
+      required this.favorito,
+      required this.ver,
+      required this.conteo});
   Map<String, dynamic> tomap3() {
     return {
       'id': id,
@@ -42,7 +45,9 @@ class Cancion {
       'ruta': ruta,
       'uri': uri,
       'imagen': imagen,
-      'favorito': favorito
+      'favorito': favorito,
+      'ver': ver,
+      'conteo': conteo
     };
   }
 
@@ -60,6 +65,8 @@ class Cancion {
         ruta: map3['ruta'] ?? '',
         uri: map3['uri'] ?? '',
         imagen: map3['imagen'] ?? '',
-        favorito: map3['favorito'] ?? '');
+        favorito: map3['favorito'] ?? '',
+        ver: map3['ver'] ?? '',
+        conteo: map3['conteo'] ?? 0);
   }
 }

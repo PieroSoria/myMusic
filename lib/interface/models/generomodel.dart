@@ -9,7 +9,7 @@ class Genero {
   factory Genero.fromMap(Map<String, dynamic> map) {
     return Genero(
       id: map['id'] ?? 0,
-      genero: map['genero'] ?? '',
+      genero: map['genero'] ?? ''
     );
   }
 }

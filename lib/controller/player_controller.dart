@@ -19,9 +19,11 @@ class PlayerController extends GetxController {
 
   final funciones = FuncionesSQL();
   Rx<Uint8List?> artworkImage = Rx<Uint8List?>(null);
+
   RxList<Cancion> canciones = <Cancion>[].obs;
   RxBool isPlaying = false.obs;
   RxBool reproduccion = false.obs;
+  RxInt playingindex = 0.obs;
   var duration = ''.obs;
   var position = ''.obs;
   var max = 0.0.obs;
@@ -88,7 +90,9 @@ class PlayerController extends GetxController {
             ruta: song.data,
             uri: song.uri.toString(),
             imagen: '',
-            favorito: 'false');
+            favorito: 'false',
+            ver: '1',
+            conteo: 0);
         await funciones.insertarcanciones(datamap);
       }
       return true;
@@ -99,17 +103,17 @@ class PlayerController extends GetxController {
   }
 
   Future<void> mostrarcanciones() async {
-    canciones.clear();
     funciones.mostrarsongdatabase().then((data) =>
         canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
   }
 
-  Future<void> eliminarcanciones(String id) async {
-    funciones.eliminarcanciondedb(id).then((value) => value
-        ? Get.snackbar("Exito", "La cancion se elimino correctamente",
+  Future<void> ocultarcancion(String id) async {
+    await funciones.ocultarcanciondedb(id).then((value) => value
+        ? Get.snackbar("Exito", "La cancion se oculto correctamente",
             colorText: Colors.white)
-        : Get.snackbar("Opps!!", "No se borro la cancion",
+        : Get.snackbar("Opps!!", "No se oculto la cancion",
             colorText: Colors.white));
+    await mostrarcanciones();
   }
 
   updatePosition() {
@@ -166,6 +170,13 @@ class PlayerController extends GetxController {
 
   toggleRepeatMode() {
     isRepeatMode.value = !isRepeatMode.value;
+    if (isRepeatMode.value) {
+      Get.snackbar("Modo Repeticion", "Repeticion uno",
+          colorText: Colors.white);
+    } else {
+      Get.snackbar("Modo Repeticion", "Repaticion todos",
+          colorText: Colors.white);
+    }
     audioPlayer.setLoopMode(isRepeatMode.value ? LoopMode.one : LoopMode.off);
   }
 
@@ -174,13 +185,16 @@ class PlayerController extends GetxController {
     if (isRandomMode.value) {
       audioPlayer.setShuffleModeEnabled(true);
       audioPlayer.shuffle();
+      Get.snackbar("Modo Aleatorio", "Activado", colorText: Colors.white);
     } else {
       audioPlayer.setShuffleModeEnabled(false);
+      Get.snackbar("Modo Aleatorio", "Desactivado", colorText: Colors.white);
     }
   }
 
   playsong(String? uri, index, id, titulo, List<Cancion> data) {
     actualcancion(data[index]);
+    playingindex(index);
     try {
       audioPlayer.setAudioSource(
         ConcatenatingAudioSource(
@@ -271,7 +285,7 @@ class PlayerController extends GetxController {
   }
 
   Future<void> cargadealbumes() async {
-    audioquery
+    await audioquery
         .queryAlbums(
           sortType: AlbumSortType.ALBUM,
           orderType: OrderType.ASC_OR_SMALLER,
@@ -280,11 +294,10 @@ class PlayerController extends GetxController {
         )
         .then((data) => listalbum.assignAll(
             data.map((e) => Album(id: e.id, album: e.album)).toList()));
-    // listalbum = data;
   }
 
   Future<void> cargardeartista() async {
-    audioquery
+    await audioquery
         .queryArtists(
           sortType: ArtistSortType.ARTIST,
           orderType: OrderType.ASC_OR_SMALLER,
@@ -296,7 +309,7 @@ class PlayerController extends GetxController {
   }
 
   Future<void> cargadegenero() async {
-    audioquery
+    await audioquery
         .queryGenres(
           sortType: GenreSortType.GENRE,
           orderType: OrderType.ASC_OR_SMALLER,
@@ -314,17 +327,17 @@ class PlayerController extends GetxController {
   }
 
   Future<void> cargarlistadeplaylist() async {
-    funciones.cargarplaylist().then((data) =>
+    await funciones.cargarplaylist().then((data) =>
         listplaylist.assignAll(data.map((e) => PlayList.fromMap(e)).toList()));
   }
 
   Future<void> createplaylist(String name) async {
-    funciones.crearplaylist(name).then((value) => value
+    await funciones.crearplaylist(name).then((value) => value
         ? Get.snackbar("Exito", "Se creo una lista de playlist",
             colorText: Colors.white)
         : Get.snackbar("Opps!!", "No se registro su playlist",
             colorText: Colors.white));
-    cargarlistadeplaylist();
+    await cargarlistadeplaylist();
   }
 
   Future<void> removerplaylist(String id, String nombreplaylist) async {
@@ -346,12 +359,48 @@ class PlayerController extends GetxController {
     await cargarlistadeplaylist();
   }
 
-  Future<void> capturarimagen(String id) async {
-    funciones.capturarimagendatabase(id).then((value) => value
-        ? Get.snackbar("Exito", "La imagen se guardo satisfactoriamente",
-            colorText: Colors.white)
-        : Get.snackbar("Opps!", "No se cargo ninguna imagen",
-            colorText: Colors.white));
-    mostrarcanciones();
+  Future<void> cargarplaylistselect(String id) async {
+    canciones.clear();
+    List<String> result = await funciones.musicadeplaylist(id);
+    await funciones.cargarmusicdelaplaylist(result).then((data) =>
+        canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  }
+
+  Future<void> capturarimagen(String id, int currentsindex) async {
+    await funciones.capturarimagendatabase(id, currentsindex).then((value) =>
+        value
+            ? Get.snackbar("Exito", "La imagen se guardo satisfactoriamente",
+                colorText: Colors.white)
+            : Get.snackbar("Opps!", "No se cargo ninguna imagen",
+                colorText: Colors.white));
+    // await mostrarcanciones();
+  }
+
+  Future<void> capturarimagenplaylist(String id, int currrentsindex) async {
+    await funciones.capturarimagenparaplaylist(id, currrentsindex).then(
+        (value) => value
+            ? Get.snackbar("Exito", "La imagen se guardo satisfactoriamente",
+                colorText: Colors.white)
+            : Get.snackbar("Opps!", "No se cargo ninguna imagen",
+                colorText: Colors.white));
+  }
+
+  Future<void> actualizarImagendelacancion(
+      int index, String nuevaImagen) async {
+    if (index >= 0 && index < canciones.length) {
+      Cancion cancion = canciones[index];
+      cancion.imagen = nuevaImagen;
+      canciones[index] = cancion;
+      canciones.refresh();
+    }
+  }
+
+  Future<void> actualizarimagendeplaylist(int index, String nuevaimagen) async {
+    if (index >= 0 && index < listplaylist.length) {
+      PlayList playlist = listplaylist[index];
+      playlist.imagen = nuevaimagen;
+      listplaylist[index] = playlist;
+      listplaylist.refresh();
+    }
   }
 }

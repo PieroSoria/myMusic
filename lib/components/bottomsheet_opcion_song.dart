@@ -3,14 +3,17 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_music/components/opcioniconbutton.dart';
 import 'package:my_music/controller/player_controller.dart';
 
 import 'package:my_music/interface/models/songs.dart';
 import 'package:ringtone_set/ringtone_set.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BotomSheetSong extends StatefulWidget {
+  final int index;
   final Cancion cancion;
-  const BotomSheetSong({super.key, required this.cancion});
+  const BotomSheetSong({super.key, required this.cancion, required this.index});
 
   @override
   State<BotomSheetSong> createState() => _BotomSheetSongState();
@@ -18,24 +21,6 @@ class BotomSheetSong extends StatefulWidget {
 
 class _BotomSheetSongState extends State<BotomSheetSong> {
   final controller = Get.put(PlayerController());
-
-  Future<void> eliminarArchivo(String ruta) async {
-    try {
-      // Crea una instancia de File con la ruta del archivo
-      File archivo = File(ruta);
-
-      // Verifica si el archivo existe antes de intentar eliminarlo
-      if (await archivo.exists()) {
-        // Elimina el archivo
-        await archivo.delete();
-        debugPrint('Archivo eliminado correctamente.');
-      } else {
-        debugPrint('El archivo no existe.');
-      }
-    } catch (e) {
-      debugPrint('Error al eliminar el archivo: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,35 +38,59 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              SizedBox(
+                width: 280,
+                child: Column(
+                  children: [
+                    Text(
+                      widget.cancion.displayNameWOExt,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontSize: 16),
+                    ),
+                    Text(
+                      widget.cancion.artista,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontSize: 15),
+                    ),
+                  ],
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(
-                    width: 280,
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.cancion.displayNameWOExt,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontSize: 16),
-                        ),
-                        Text(
-                          widget.cancion.artista,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontSize: 15),
-                        ),
-                      ],
+                  OpcionIconButton(
+                    onfunction: () {
+                      Share.shareXFiles([XFile(widget.cancion.ruta)],
+                          text: widget.cancion.displayNameWOExt);
+                    },
+                    titulo: "Compartir",
+                    iconbtn: const Icon(
+                      Icons.share,
+                      color: Colors.white,
+                      size: 36,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
+                  OpcionIconButton(
+                    onfunction: () {},
+                    titulo: "Agregar a",
+                    iconbtn: const Icon(
+                      Icons.add_box_outlined,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                  ),
+                  OpcionIconButton(
+                    onfunction: () {},
+                    titulo: "Informacion",
+                    iconbtn: const Icon(
                       Icons.info_outline_rounded,
                       color: Colors.white,
                       size: 36,
@@ -92,91 +101,20 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.share_outlined,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Compartir",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.add_box_outlined,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Agregar a",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.share_outlined,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Compartir",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      controller.capturarimagen(widget.cancion.id);
+                  OpcionIconButton(
+                    onfunction: () {
+                      controller.capturarimagen(
+                          widget.cancion.id, widget.index);
                     },
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.photo,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Diseño",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
+                    titulo: "Diseño",
+                    iconbtn: const Icon(
+                      Icons.photo,
+                      color: Colors.white,
+                      size: 36,
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
+                  OpcionIconButton(
+                    onfunction: () {
                       RingtoneSet.setRingtoneFromFile(File(widget.cancion.ruta))
                           .then((value) => value
                               ? Get.snackbar("Exito",
@@ -185,45 +123,24 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
                               : Get.snackbar("Opps!", "No se realizo el cambio",
                                   colorText: Colors.white));
                     },
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.share_outlined,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Tono de Llamada",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
+                    titulo: "Tono de llamada",
+                    iconbtn: const Icon(
+                      Icons.notifications,
+                      color: Colors.white,
+                      size: 36,
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      eliminarArchivo(widget.cancion.ruta);
-                      
+                  OpcionIconButton(
+                    onfunction: () {
+                      controller.ocultarcancion(widget.cancion.ruta);
                     },
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                          size: 36,
-                        ),
-                        Text(
-                          "Eliminar Cancion",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
+                    titulo: "Ocultar Cancion",
+                    iconbtn: const Icon(
+                      Icons.dnd_forwardslash_sharp,
+                      color: Colors.white,
+                      size: 36,
                     ),
-                  ),
+                  )
                 ],
               )
             ],

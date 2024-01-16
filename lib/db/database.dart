@@ -23,14 +23,12 @@ class BaseSQL {
 
   _createDB(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS listadeplaylist (id TEXT PRIMARY KEY, nombre TEXT, listmusic TEXT)");
+        "CREATE TABLE IF NOT EXISTS listadeplaylist (id TEXT PRIMARY KEY, nombre TEXT, listmusic TEXT,imagen TEXT)");
     // await db.execute(
     //     "CREATE TABLE IF NOT EXISTS listademusic(id TEXT PRIMARY KEY, playlist TEXT, nombre TEXT)");
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS canciones (id TEXT PRIMARY KEY,displayNameWOExt TEXT, displayName TEXT, artista TEXT, album TEXT,genero TEXT,datos TEXT,hora TEXT, fecha TEXT, ruta TEXT,uri TEXT,duration TEXT,imagen TEXT,favorito TEXT)");
+        "CREATE TABLE IF NOT EXISTS canciones (id TEXT PRIMARY KEY,displayNameWOExt TEXT, displayName TEXT, artista TEXT, album TEXT,genero TEXT,datos TEXT,hora TEXT, fecha TEXT, ruta TEXT,uri TEXT,imagen TEXT,favorito TEXT,ver TEXT,conteo REAL)");
 
-    await db.execute(
-        'CREATE TABLE IF NOT EXISTS playcountsong(displayNameWOExt TEXT, count TEXT)');
     debugPrint(
         "==================base de datos creada =======================");
   }

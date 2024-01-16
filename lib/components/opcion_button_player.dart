@@ -41,7 +41,7 @@ class _OpcionButtonState extends State<OpcionButton> {
                 controller.anteriorcancion(controller.currentSongid.value);
               },
               icon: const Icon(
-                Icons.arrow_back_ios_new_outlined,
+                Icons.skip_previous,
                 color: Colors.white,
               ),
             ),
@@ -79,7 +79,7 @@ class _OpcionButtonState extends State<OpcionButton> {
                 controller.siguientecancion(controller.currentSongid.value);
               },
               icon: const Icon(
-                Icons.arrow_forward_ios_rounded,
+                Icons.skip_next,
                 color: Colors.white,
               ),
             ),

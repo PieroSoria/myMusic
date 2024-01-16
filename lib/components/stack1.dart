@@ -27,15 +27,15 @@ class _Stack1State extends State<Stack1> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx(
-          () => Padding(
-            padding: const EdgeInsets.all(0),
-            child: CircleAvatar(
+        Padding(
+          padding: const EdgeInsets.all(0),
+          child: Obx(
+            () => CircleAvatar(
               radius: 160,
-              backgroundImage: controller.artworkImage.value != null
-                  ? MemoryImage(controller.artworkImage.value!)
-                  : controller.currentimagen.value != ""
-                      ? FileImage(File(controller.currentimagen.value))
+              backgroundImage: controller.currentimagen.value != ""
+                  ? FileImage(File(controller.currentimagen.value))
+                  : controller.artworkImage.value != null
+                      ? MemoryImage(controller.artworkImage.value!)
                           as ImageProvider<Object>?
                       : const AssetImage("assets/image/fondo.jpg"),
             ),

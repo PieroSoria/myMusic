@@ -54,14 +54,23 @@ class _ConfigAppState extends State<ConfigApp> {
                             fontSize: 20,
                           ),
                         ),
-                        subtitle: controller.cargandosong.value
-                            ? const CircularProgressIndicator()
-                            : const Text(
-                                "Escuchar",
-                                style: TextStyle(
-                                    fontFamily: "Poppins", color: Colors.white),
-                                textAlign: TextAlign.center,
-                              ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            controller.cargandosong.value
+                                ? const SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: CircularProgressIndicator())
+                                : const Text(
+                                    "Escuchar",
+                                    style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                          ],
+                        ),
                         onTap: () {
                           controller.loadsong();
                         },

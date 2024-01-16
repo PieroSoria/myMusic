@@ -18,7 +18,9 @@ class _BarMenuMusicState extends State<BarMenuMusic> {
   final controller = Get.put(PlayerController());
   @override
   void initState() {
-    ever(controller.currentSongid, (_) {});
+    ever(controller.currentSongid, (_) {
+      controller.loadArtworkImage();
+    });
     super.initState();
   }
 

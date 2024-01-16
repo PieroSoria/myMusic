@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_music/controller/player_controller.dart';
 import 'package:my_music/db/database.dart';
+import 'package:my_music/interface/models/playlistmodel.dart';
 import 'package:my_music/interface/models/songs.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,12 +15,15 @@ class FuncionesSQL {
 
   // funciones generales
 
-  Future<bool> capturarimagendatabase(String id) async {
+  Future<bool> capturarimagendatabase(String id, int index) async {
     Database? mydb = await dbcre.db;
+    final controller = Get.put(PlayerController());
     final picker = ImagePicker();
     XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
     int rep = await mydb!.rawUpdate(
         "UPDATE canciones SET imagen = ? WHERE id = ?", [imagen!.path, id]);
+    controller.currentimagen(imagen.path);
+    controller.actualizarImagendelacancion(index, imagen.path);
     return rep > 0;
   }
 
@@ -35,15 +41,28 @@ class FuncionesSQL {
     }
   }
 
-  Future<bool> eliminarcanciondedb(String id) async {
+  Future<bool> ocultarcanciondedb(String id) async {
     Database? mydb = await dbcre.db;
-    int rep = await mydb!.delete("canciones", where: "id = ?", whereArgs: [id]);
+    int rep = await mydb!
+        .rawUpdate("UPDATE canciones SET ver = ? WHERE id = ?", ['0', id]);
     return rep > 0;
+  }
+
+  Future<bool> sumarconteosong(String id) async {
+    Database? mydb = await dbcre.db;
+    final respon = await mydb!.query("canciones",
+        columns: ['conteo'], where: 'id = ?', whereArgs: [id]);
+    double result = respon[0]['conteo'] as double;
+    double conteo = ++result;
+    int rep1 = await mydb.rawUpdate(
+        "UPDATE canciones SET conteo = ? WHERE id = ?", [conteo, id]);
+    return rep1 > 0;
   }
 
   Future<List<Map<String, dynamic>>> mostrarsongdatabase() async {
     Database? mydb = await dbcre.db;
-    List<Map<String, dynamic>> data = await mydb!.query("canciones");
+    List<Map<String, dynamic>> data =
+        await mydb!.query("canciones", where: 'ver = ?', whereArgs: ['1']);
     return data;
   }
 
@@ -95,8 +114,9 @@ class FuncionesSQL {
   Future<bool> crearplaylist(String nombre) async {
     Database? mydb = await dbcre.db;
     Digest id = sha256.convert(utf8.encode(nombre));
-    var values = {'id': id.toString(), 'nombre': nombre, 'listmusic': ""};
-    int rep = await mydb!.insert("listadeplaylist", values);
+    final values =
+        PlayList(id: id.toString(), nombre: nombre, listmusic: "", imagen: "");
+    int rep = await mydb!.insert("listadeplaylist", values.tomap());
     return rep > 0;
   }
 
@@ -111,6 +131,17 @@ class FuncionesSQL {
     Database? mydb = await dbcre.db;
     int rep = await mydb!.rawUpdate(
         "UPDATE listadeplaylist SET nombre = ? WHERE id = ?", [nombre, id]);
+    return rep > 0;
+  }
+
+  Future<bool> capturarimagenparaplaylist(String id, int index) async {
+    Database? mydb = await dbcre.db;
+    final controller = Get.put(PlayerController());
+    final picker = ImagePicker();
+    XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
+    int rep = await mydb!.rawUpdate(
+        "UPDATE canciones SET imagen = ? WHERE id = ?", [imagen!.path, id]);
+    controller.actualizarimagendeplaylist(index, imagen.path);
     return rep > 0;
   }
 

@@ -97,21 +97,22 @@ class _Stack2State extends State<Stack2> {
                         size: 36,
                       )),
                   IconButton(
-                      onPressed: () {
-                        controller.togglefavorites(
-                            controller.currentSongid.toString());
-                      },
-                      icon: controller.currentfavorito.value
-                          ? const Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                              size: 36,
-                            )
-                          : const Icon(
-                              Icons.favorite_border,
-                              color: Colors.white,
-                              size: 36,
-                            ),),
+                    onPressed: () {
+                      controller
+                          .togglefavorites(controller.currentSongid.toString());
+                    },
+                    icon: controller.currentfavorito.value
+                        ? const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 36,
+                          )
+                        : const Icon(
+                            Icons.favorite_border,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                  ),
                 ],
               ),
             ),

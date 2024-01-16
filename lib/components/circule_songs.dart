@@ -38,10 +38,10 @@ class _CirculoSongState extends State<CirculoSong> {
           return Padding(
             padding: const EdgeInsets.all(25.0),
             child: CircleAvatar(
-              backgroundImage: controller.artworkImage.value != null
-                  ? MemoryImage(controller.artworkImage.value!)
-                  : controller.currentimagen.value != ""
-                      ? FileImage(File(controller.currentimagen.value))
+              backgroundImage: controller.currentimagen.value != ""
+                  ? FileImage(File(controller.currentimagen.value))
+                  : controller.artworkImage.value != null
+                      ? MemoryImage(controller.artworkImage.value!)
                           as ImageProvider<Object>?
                       : const AssetImage("assets/image/fondo.jpg"),
             ),

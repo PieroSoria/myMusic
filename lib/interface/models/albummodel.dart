@@ -11,7 +11,7 @@ class Album {
   factory Album.fromMap(Map<String, dynamic> map) {
     return Album(
       id: map['id'] ?? 0,
-      album: map['album'] ?? '',
+      album: map['album'] ?? ''
     );
   }
 }

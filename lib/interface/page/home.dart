@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Future<void> concederpermiso() async {
     final controller = Get.put(PlayerController());
+
     var perm = await Permission.storage.request();
     var perm2 = await Permission.audio.request();
     if (perm.isGranted || perm2.isGranted) {
@@ -81,7 +82,7 @@ class _HomeState extends State<Home> {
                   "Dar Permiso",
                   style: TextStyle(
                       fontFamily: "Poppins", fontSize: 15, color: Colors.black),
-                ))
+                ),)
           ],
         ));
   }

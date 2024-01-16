@@ -4,13 +4,16 @@ import 'package:my_music/components/stack2.dart';
 import 'package:my_music/controller/controller_settings.dart';
 import 'package:my_music/controller/player_controller.dart';
 
+import '../../components/bottomsheet_opcion_song.dart';
 import '../../components/fondodeplay.dart';
 import '../../components/opcion_button_player.dart';
 import '../../components/stack1.dart';
 import '../../settings/Utils/palletcolors.dart';
 
 class Player extends StatefulWidget {
-  const Player({super.key});
+  const Player({
+    super.key,
+  });
 
   @override
   State<Player> createState() => _PlayerState();
@@ -91,7 +94,11 @@ class _PlayerState extends State<Player> {
                                     backgroundColor:
                                         const Color.fromARGB(0, 194, 193, 193),
                                     builder: (context) {
-                                      return Container();
+                                      return BotomSheetSong(
+                                        cancion: controller.canciones[
+                                            controller.playingindex.value],
+                                        index: controller.playingindex.value,
+                                      );
                                     });
                               },
                               icon: const Icon(

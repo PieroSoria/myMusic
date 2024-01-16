@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_music/controller/player_controller.dart';
@@ -17,6 +19,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
   final controller = Get.put(PlayerController());
   @override
   void initState() {
+    controller.cargarlistadeplaylist();
     super.initState();
   }
 
@@ -90,6 +93,22 @@ class _PlayListMusicState extends State<PlayListMusic> {
                     return Card(
                       color: Colors.transparent,
                       child: ListTile(
+                        leading: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: controller.listplaylist[index].imagen !=
+                                        ""
+                                    ? FileImage(
+                                        File(controller
+                                            .listplaylist[index].imagen!),
+                                      ) as ImageProvider
+                                    : const AssetImage("assets/image/dort.png"),
+                                fit: BoxFit.fill),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
                         title: Text(
                           controller.listplaylist[index].nombre!,
                           style: const TextStyle(
@@ -105,9 +124,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
                                     const Color.fromARGB(131, 82, 78, 78),
                                 builder: (context) {
                                   return BotomSheetPlaylist(
-                                    id: controller.listplaylist[index].id!,
-                                    nombre:
-                                        controller.listplaylist[index].nombre!,
+                                    index: index,
                                   );
                                 });
                           },
@@ -119,8 +136,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
                         onTap: () {
                           Get.to(
                               () => ScreenPlaylist(
-                                    nombre:
-                                        controller.listplaylist[index].nombre!,
+                                    playList: controller.listplaylist[index],
                                   ),
                               transition: Transition.rightToLeft);
                         },
