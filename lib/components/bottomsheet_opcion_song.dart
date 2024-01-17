@@ -14,7 +14,13 @@ import 'package:share_plus/share_plus.dart';
 class BotomSheetSong extends StatefulWidget {
   final int index;
   final Cancion cancion;
-  const BotomSheetSong({super.key, required this.cancion, required this.index});
+  final bool cambio;
+  final String? idplaylist;
+  const BotomSheetSong(
+      {super.key,
+      required this.cancion,
+      required this.index,
+      required this.cambio, this.idplaylist});
 
   @override
   State<BotomSheetSong> createState() => _BotomSheetSongState();
@@ -81,10 +87,18 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
                   ),
                   OpcionIconButton(
                     onfunction: () {
-                      Get.to(() => PlayListMusic(seleccionl: false,idsong: widget.cancion.id,),
-                          transition: Transition.fadeIn);
+                      if (widget.cambio) {
+                        controller.removercanciondelplaylist(widget.idplaylist!,widget.cancion.id);
+                      } else {
+                        Get.to(
+                            () => PlayListMusic(
+                                  seleccionl: false,
+                                  idsong: widget.cancion.id,
+                                ),
+                            transition: Transition.fadeIn);
+                      }
                     },
-                    titulo: "Agregar a",
+                    titulo: widget.cambio ? "Quitar del playlist" : "Agregar a",
                     iconbtn: const Icon(
                       Icons.add_box_outlined,
                       color: Colors.white,

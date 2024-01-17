@@ -99,6 +99,7 @@ class _PlayerState extends State<Player> {
                                         cancion: controller.canciones[
                                             controller.playingindex.value],
                                         index: controller.playingindex.value,
+                                        cambio:false
                                       );
                                     });
                               },

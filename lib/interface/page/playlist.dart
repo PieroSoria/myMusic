@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_music/controller/player_controller.dart';
 import 'package:my_music/interface/page/playlist_screen.dart';
+import 'package:my_music/settings/Utils/fondo.dart';
 
 import '../../components/bottomsheet_opcion_playlist.dart';
 
@@ -32,6 +33,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
+          widget.seleccionl ? const SizedBox.shrink() : const Fondo(),
           Align(
             alignment: Alignment.topCenter,
             child: SizedBox(
@@ -108,7 +110,7 @@ class _PlayListMusicState extends State<PlayListMusic> {
                                       ) as ImageProvider
                                     : const AssetImage("assets/image/dort.png"),
                                 fit: BoxFit.fill),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         title: Text(
@@ -136,16 +138,18 @@ class _PlayListMusicState extends State<PlayListMusic> {
                           ),
                         ),
                         onTap: () {
-                          widget.seleccionl
-                              ? Get.to(
-                                  () => ScreenPlaylist(
-                                        playList:
-                                            controller.listplaylist[index],
-                                      ),
-                                  transition: Transition.rightToLeft)
-                              : controller.insertcancionesplaylist(
-                                  controller.listplaylist[index].id!,
-                                  widget.idsong!);
+                          if (widget.seleccionl) {
+                            Get.to(
+                                () => ScreenPlaylist(
+                                      playList: controller.listplaylist[index],
+                                    ),
+                                transition: Transition.rightToLeft);
+                          } else {
+                            controller.insertcancionesplaylist(
+                                controller.listplaylist[index].id!,
+                                widget.idsong!);
+                            Navigator.of(context).pop();
+                          }
                         },
                       ),
                     );

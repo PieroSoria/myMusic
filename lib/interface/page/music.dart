@@ -165,6 +165,7 @@ class _MusicState extends State<Music> {
                                         return BotomSheetSong(
                                           cancion: controller.canciones[index],
                                           index: index,
+                                          cambio: false,
                                         );
                                       });
                                 },

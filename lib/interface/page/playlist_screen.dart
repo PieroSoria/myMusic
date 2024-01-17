@@ -36,169 +36,224 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
           const Fondo(),
           Align(
             alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
-              child: Text(
-                "Lista de ${widget.playList.nombre}",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: "Poppins",
-                  fontSize: 30,
-                  color: Colors.white,
-                ),
+            child: Container(
+              width: double.infinity,
+              height: 250,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                image: DecorationImage(
+                    image: widget.playList.imagen != ""
+                        ? FileImage(
+                            File(widget.playList.imagen!),
+                          ) as ImageProvider
+                        : const AssetImage("assets/image/dort.png"),
+                    fit: BoxFit.fill),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
               ),
             ),
           ),
           Positioned(
-              top: 120,
+            top: 50,
+            left: 20,
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Positioned(
+              top: 250,
               left: 0,
               right: 0,
               bottom: 0,
-              child: SizedBox(
-                child: FutureBuilder(
-                    future:
-                        controller.cargarplaylistselect(widget.playList.id!),
-                    builder: (context, snp) {
-                      if (snp.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: Text(
-                            "Cargando Datos",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      } else if (snp.hasData || snp.error != null) {
-                        return const Center(
-                          child: Text(
-                            "No se encontraron datos",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Obx(
-                          () => ListView.builder(
-                            itemCount: controller.canciones.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(73, 36, 37, 82),
-                                  borderRadius: BorderRadius.circular(12),
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Color.fromARGB(99, 2, 2, 2),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                      child: Text(
+                        "Lista de ${widget.playList.nombre}",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 30,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: FutureBuilder(
+                          future: controller
+                              .cargarplaylistselect(widget.playList.id!),
+                          builder: (context, snp) {
+                            if (snp.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text(
+                                  "Cargando Datos",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: "Poppins",
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              );
+                            } else if (snp.hasData || snp.error != null) {
+                              return const Center(
+                                child: Text(
+                                  "No se encontraron datos",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: "Poppins",
+                                    fontSize: 20,
+                                    color: Colors.white,
                                   ),
-                                  leading: Obx(() {
-                                    String imagenPath =
-                                        controller.canciones[index].imagen;
-                                    if (imagenPath != "") {
-                                      return Container(
-                                        width: 48,
-                                        height: 48,
-                                        decoration: BoxDecoration(
+                                ),
+                              );
+                            } else {
+                              return Obx(
+                                () => ListView.builder(
+                                  itemCount: controller.canciones.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            73, 36, 37, 82),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
-                                          image: DecorationImage(
-                                              image:
-                                                  FileImage(File(imagenPath)),
-                                              fit: BoxFit.fill),
+                                              BorderRadius.circular(12),
                                         ),
-                                      );
-                                    } else {
-                                      return QueryArtworkWidget(
-                                        id: int.parse(
-                                          controller.canciones[index].id,
-                                        ),
-                                        type: ArtworkType.AUDIO,
-                                        artworkFit: BoxFit.fill,
-                                        artworkBorder: BorderRadius.circular(6),
-                                        artworkHeight: 48,
-                                        artworkWidth: 48,
-                                        nullArtworkWidget: Container(
-                                          width: 48,
-                                          height: 48,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            image: const DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/image/shape.jpg'),
-                                              fit: BoxFit.fill,
-                                            ),
+                                        leading: Obx(() {
+                                          String imagenPath = controller
+                                              .canciones[index].imagen;
+                                          if (imagenPath != "") {
+                                            return Container(
+                                              width: 48,
+                                              height: 48,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                    image: FileImage(
+                                                        File(imagenPath)),
+                                                    fit: BoxFit.fill),
+                                              ),
+                                            );
+                                          } else {
+                                            return QueryArtworkWidget(
+                                              id: int.parse(
+                                                controller.canciones[index].id,
+                                              ),
+                                              type: ArtworkType.AUDIO,
+                                              artworkFit: BoxFit.fill,
+                                              artworkBorder:
+                                                  BorderRadius.circular(6),
+                                              artworkHeight: 48,
+                                              artworkWidth: 48,
+                                              nullArtworkWidget: Container(
+                                                width: 48,
+                                                height: 48,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  image: const DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/image/shape.jpg'),
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }),
+                                        title: Text(
+                                          controller.canciones[index]
+                                              .displayNameWOExt,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "Poppins",
+                                            fontSize: 16,
                                           ),
                                         ),
-                                      );
-                                    }
-                                  }),
-                                  title: Text(
-                                    controller
-                                        .canciones[index].displayNameWOExt,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: "Poppins",
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    controller.canciones[index].artista,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20),
+                                        subtitle: Text(
+                                          controller.canciones[index].artista,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                        trailing: IconButton(
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                  top: Radius.circular(20),
+                                                ),
+                                              ),
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      0, 194, 193, 193),
+                                              builder: (context) {
+                                                return BotomSheetSong(
+                                                    cancion: controller
+                                                        .canciones[index],
+                                                    index: index,
+                                                    cambio: true,
+                                                    idplaylist:
+                                                        widget.playList.id);
+                                              },
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.more_vert_outlined,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                        backgroundColor: const Color.fromARGB(
-                                            0, 194, 193, 193),
-                                        builder: (context) {
-                                          return BotomSheetSong(
-                                            cancion:
-                                                controller.canciones[index],
-                                            index: index,
+                                        onTap: () {
+                                          controller.playsong(
+                                            controller.canciones[index].uri,
+                                            index,
+                                            controller.canciones[index].id,
+                                            controller.canciones[index]
+                                                .displayNameWOExt,
+                                            controller.canciones,
                                           );
                                         },
-                                      );
-                                    },
-                                    icon: const Icon(
-                                      Icons.more_vert_outlined,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    controller.playsong(
-                                      controller.canciones[index].uri,
-                                      index,
-                                      controller.canciones[index].id,
-                                      controller
-                                          .canciones[index].displayNameWOExt,
-                                      controller.canciones,
+                                      ),
                                     );
                                   },
                                 ),
                               );
-                            },
-                          ),
-                        );
-                      }
-                    }),
+                            }
+                          }),
+                    ),
+                  ],
+                ),
               )),
           Obx(
             () => Align(

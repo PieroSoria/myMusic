@@ -405,9 +405,19 @@ class PlayerController extends GetxController {
   }
 
   Future<void> insertcancionesplaylist(String idplaylist, String idsong) async {
-    await funciones.insertarcancionenelplaylist(idplaylist, idsong).then((value) =>
-        value
+    await funciones.insertarcancionenelplaylist(idplaylist, idsong).then(
+        (value) => value
             ? Get.snackbar("Exito", "Se guardo correctamente",
+                colorText: Colors.white)
+            : Get.snackbar("Opps!", "Ocurrio un problema",
+                colorText: Colors.white));
+  }
+
+  Future<void> removercanciondelplaylist(
+      String idplaylist, String idsong) async {
+    await funciones.removercancionesenelplaylist(idplaylist, idsong).then(
+        (value) => value
+            ? Get.snackbar("Exito", "Se quito la cancion del playlist",
                 colorText: Colors.white)
             : Get.snackbar("Opps!", "Ocurrio un problema",
                 colorText: Colors.white));
