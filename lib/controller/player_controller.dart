@@ -139,6 +139,17 @@ class PlayerController extends GetxController {
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
 
+  void convertirSegundos(int segundos) {
+    int minutos = segundos ~/ 60; 
+    int segundosRestantes = segundos % 60; 
+
+    double minutosDecimal = minutos + (segundosRestantes / 60);
+
+    debugPrint(
+        'El número $segundos se convierte a $minutos minutos y $segundosRestantes segundos.');
+    debugPrint('En formato 2.18 minutos: $minutosDecimal minutos');
+  }
+
   changeDurationToSeconds(seconds) {
     var duration = Duration(seconds: seconds);
     audioPlayer.seek(duration);

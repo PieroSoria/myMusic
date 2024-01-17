@@ -37,13 +37,15 @@ class _CirculoSongState extends State<CirculoSong> {
         innerWidget: (percentage) {
           return Padding(
             padding: const EdgeInsets.all(25.0),
-            child: CircleAvatar(
-              backgroundImage: controller.currentimagen.value != ""
-                  ? FileImage(File(controller.currentimagen.value))
-                  : controller.artworkImage.value != null
-                      ? MemoryImage(controller.artworkImage.value!)
-                          as ImageProvider<Object>?
-                      : const AssetImage("assets/image/fondo.jpg"),
+            child: Obx(
+              () => CircleAvatar(
+                backgroundImage: controller.currentimagen.value != ""
+                    ? FileImage(File(controller.currentimagen.value))
+                    : controller.artworkImage.value != null
+                        ? MemoryImage(controller.artworkImage.value!)
+                            as ImageProvider<Object>?
+                        : const AssetImage("assets/image/fondo.jpg"),
+              ),
             ),
           );
         },

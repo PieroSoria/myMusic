@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_music/components/dialogosong.dart';
 import 'package:my_music/components/opcioniconbutton.dart';
 import 'package:my_music/controller/player_controller.dart';
 
@@ -20,7 +21,8 @@ class BotomSheetSong extends StatefulWidget {
       {super.key,
       required this.cancion,
       required this.index,
-      required this.cambio, this.idplaylist});
+      required this.cambio,
+      this.idplaylist});
 
   @override
   State<BotomSheetSong> createState() => _BotomSheetSongState();
@@ -88,7 +90,8 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
                   OpcionIconButton(
                     onfunction: () {
                       if (widget.cambio) {
-                        controller.removercanciondelplaylist(widget.idplaylist!,widget.cancion.id);
+                        controller.removercanciondelplaylist(
+                            widget.idplaylist!, widget.cancion.id);
                       } else {
                         Get.to(
                             () => PlayListMusic(
@@ -99,14 +102,27 @@ class _BotomSheetSongState extends State<BotomSheetSong> {
                       }
                     },
                     titulo: widget.cambio ? "Quitar del playlist" : "Agregar a",
-                    iconbtn: const Icon(
-                      Icons.add_box_outlined,
-                      color: Colors.white,
-                      size: 36,
-                    ),
+                    iconbtn: widget.cambio
+                        ? const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                            size: 36,
+                          )
+                        : const Icon(
+                            Icons.add_box_outlined,
+                            color: Colors.white,
+                            size: 36,
+                          ),
                   ),
                   OpcionIconButton(
-                    onfunction: () {},
+                    onfunction: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return DialogoSong(index: widget.index);
+                        },
+                      );
+                    },
                     titulo: "Informacion",
                     iconbtn: const Icon(
                       Icons.info_outline_rounded,
