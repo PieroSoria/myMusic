@@ -140,7 +140,8 @@ class FuncionesSQL {
     final picker = ImagePicker();
     XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
     int rep = await mydb!.rawUpdate(
-        "UPDATE listadeplaylist SET imagen = ? WHERE id = ?", [imagen!.path, id]);
+        "UPDATE listadeplaylist SET imagen = ? WHERE id = ?",
+        [imagen!.path, id]);
     controller.actualizarimagendeplaylist(index, imagen.path);
     return rep > 0;
   }
@@ -169,9 +170,14 @@ class FuncionesSQL {
   Future<bool> insertarcancionenelplaylist(
       String idplaylist, String idsong) async {
     Database? mydb = await dbcre.db;
-    int rep = await mydb!.rawUpdate(
+    final result = await mydb!.query("listadeplaylist",
+        columns: ['listmusic'], where: 'id = ?', whereArgs: [idplaylist]);
+    List<String> data = result[0]['listmusic'].toString().split('/');
+    data.add(idsong);
+    String newdata = data.join('/');
+    int rep = await mydb.rawUpdate(
       "UPDATE listadeplaylist SET listmusic = ? WHERE id = ?",
-      ['$idsong/', idplaylist],
+      [newdata, idplaylist],
     );
     return rep > 0;
   }
