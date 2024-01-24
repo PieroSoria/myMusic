@@ -34,6 +34,7 @@ class _MusicState extends State<Music> {
       appBar: AppBar(
         toolbarHeight: 80,
         centerTitle: true,
+        
         backgroundColor: Colors.transparent,
         title: const Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
