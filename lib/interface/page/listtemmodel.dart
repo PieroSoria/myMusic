@@ -11,7 +11,11 @@ import '../../components/barmenu.dart';
 class ListtemModel extends StatefulWidget {
   final String type;
   final String nombre;
-  const ListtemModel({super.key, required this.type, required this.nombre});
+ 
+  const ListtemModel(
+      {super.key,
+      required this.type,
+      required this.nombre});
 
   @override
   State<ListtemModel> createState() => _ListtemModelState();
@@ -48,7 +52,7 @@ class _ListtemModelState extends State<ListtemModel> {
             right: 0,
             child: SizedBox(
               child: FutureBuilder(
-                future: controller.cargarlistadeplaylist(),
+                future: controller.cargarsongtype(widget.nombre, widget.type),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(

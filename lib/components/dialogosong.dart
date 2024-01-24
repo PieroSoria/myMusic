@@ -63,6 +63,16 @@ class _DialogoSongState extends State<DialogoSong> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text(
+                      "Genero: ${controller.canciones[widget.index].genero}",
+                      style: const TextStyle(
+                        fontFamily: "Poppins",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Text(
                       "Album: ${controller.canciones[widget.index].album}",
                       style: const TextStyle(
                         fontFamily: "Poppins",
@@ -84,6 +94,16 @@ class _DialogoSongState extends State<DialogoSong> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text(
                       "Tamaño: ${controller.canciones[widget.index].datos}",
+                      style: const TextStyle(
+                        fontFamily: "Poppins",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Text(
+                      "Fecha: ${controller.canciones[widget.index].fecha}",
                       style: const TextStyle(
                         fontFamily: "Poppins",
                         color: Colors.white,

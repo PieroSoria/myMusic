@@ -27,18 +27,16 @@ class _Stack1State extends State<Stack1> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(0),
-          child: Obx(
-            () => CircleAvatar(
-              radius: 160,
-              backgroundImage: controller.currentimagen.value != ""
-                  ? FileImage(File(controller.currentimagen.value))
-                  : controller.artworkImage.value != null
-                      ? MemoryImage(controller.artworkImage.value!)
-                          as ImageProvider<Object>?
-                      : const AssetImage("assets/image/fondo.jpg"),
-            ),
+        Obx(
+          () => CircleAvatar(
+            //160
+            radius: MediaQuery.of(context).size.height / 7.5,
+            backgroundImage: controller.currentimagen.value != ""
+                ? FileImage(File(controller.currentimagen.value))
+                : controller.artworkImage.value != null
+                    ? MemoryImage(controller.artworkImage.value!)
+                        as ImageProvider<Object>?
+                    : const AssetImage("assets/image/fondo.jpg"),
           ),
         ),
         Obx(
@@ -127,6 +125,7 @@ class _Stack1State extends State<Stack1> {
                       controller.changeDurationToSeconds(newValue.toInt());
                       newValue = newValue;
                     },
+                    
                   ),
                 ),
                 Text(

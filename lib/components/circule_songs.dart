@@ -34,6 +34,7 @@ class _CirculoSongState extends State<CirculoSong> {
           controller.changeDurationToSeconds(d.toInt());
           d = d;
         },
+       
         innerWidget: (percentage) {
           return Padding(
             padding: const EdgeInsets.all(25.0),
@@ -50,7 +51,8 @@ class _CirculoSongState extends State<CirculoSong> {
           );
         },
         appearance: CircularSliderAppearance(
-          size: 330,
+          //330
+          size: MediaQuery.of(context).size.height / 3,
           angleRange: 300,
           startAngle: 300,
           customColors: CustomSliderColors(

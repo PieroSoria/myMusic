@@ -17,6 +17,7 @@ Future<void> main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
+  
   permiso = await estadodepermiso();
   runApp(const MyApp());
 }

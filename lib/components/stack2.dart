@@ -60,7 +60,7 @@ class _Stack2State extends State<Stack2> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      controller.position.value,
+                      controller.duration.value,
                       style: const TextStyle(
                           color: Colors.white70,
                           fontFamily: "Poppins",
@@ -74,12 +74,12 @@ class _Stack2State extends State<Stack2> {
                       endIndent: 2,
                     ),
                     Text(
-                      controller.duration.value,
+                      controller.position.value,
                       style: const TextStyle(
                           color: Colors.white70,
                           fontFamily: "Poppins",
                           fontSize: 18),
-                    )
+                    ),
                   ],
                 ),
               ),

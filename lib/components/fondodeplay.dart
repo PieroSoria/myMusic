@@ -17,6 +17,7 @@ class _FondoPlayState extends State<FondoPlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: Obx(
         () {
           final imagenPath = controller.currentimagen.value;

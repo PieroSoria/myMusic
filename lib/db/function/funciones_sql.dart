@@ -197,4 +197,25 @@ class FuncionesSQL {
       return false;
     }
   }
+
+  //song type
+  Future<List<Map<String, dynamic>>> cargarsongtype(
+      String nombre, String type) async {
+    Database? mydb = await dbcre.db;
+    final data =
+        await mydb!.query("canciones", where: '$type = ?', whereArgs: [nombre]);
+    return data;
+  }
+
+  Future<List<Map<String, dynamic>>> filtersongdb(String nombre) async {
+    Database? mydb = await dbcre.db;
+      final data = await mydb!.query(
+        "canciones",
+        where:
+            'displayNameWOExt LIKE ? OR artista LIKE ? OR album LIKE ? OR genero LIKE ?',
+        whereArgs: List.generate(4, (index) => '%$nombre%'),
+      );
+      return data;
+    
+  }
 }

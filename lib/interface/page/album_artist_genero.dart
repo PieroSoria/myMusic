@@ -70,33 +70,39 @@ class _ListAAGState extends State<ListAAG> {
                           onTap: () {
                             if (widget.listtype == "album") {
                               controller.cargarsongtype(
-                                  controller.listalbum[index].id.toString(),
+                                  controller.listalbum[index].album!,
                                   widget.listtype);
                               Get.to(
                                   () => ListtemModel(
-                                      type: widget.listtype,
-                                      nombre:
-                                          controller.listalbum[index].album!),
+                                        type: widget.listtype,
+                                        nombre:
+                                            controller.listalbum[index].album!,
+                                        
+                                      ),
                                   transition: Transition.downToUp);
                             } else if (widget.listtype == "artista") {
                               controller.cargarsongtype(
-                                  controller.listartist[index].id.toString(),
+                                  controller.listartist[index].artista!,
                                   widget.listtype);
                               Get.to(
                                   () => ListtemModel(
-                                      type: widget.listtype,
-                                      nombre: controller
-                                          .listartist[index].artista!),
+                                        type: widget.listtype,
+                                        nombre: controller
+                                            .listartist[index].artista!,
+                                        
+                                      ),
                                   transition: Transition.downToUp);
                             } else {
                               controller.cargarsongtype(
-                                  controller.listgenero[index].id.toString(),
+                                  controller.listgenero[index].genero!,
                                   widget.listtype);
                               Get.to(
                                   () => ListtemModel(
-                                      type: widget.listtype,
-                                      nombre:
-                                          controller.listgenero[index].genero!),
+                                        type: widget.listtype,
+                                        nombre: controller
+                                            .listgenero[index].genero!,
+                                        
+                                      ),
                                   transition: Transition.downToUp);
                             }
                           },

@@ -21,6 +21,7 @@ class PlayerController extends GetxController {
   Rx<Uint8List?> artworkImage = Rx<Uint8List?>(null);
 
   RxList<Cancion> canciones = <Cancion>[].obs;
+
   RxBool isPlaying = false.obs;
   RxBool reproduccion = false.obs;
   RxInt playingindex = 0.obs;
@@ -67,6 +68,15 @@ class PlayerController extends GetxController {
     });
   }
 
+  Future<RxList<Cancion>> mostrarsong() async {
+    final data = await funciones.mostrarsongdatabase();
+    final RxList<Cancion> cancionesList = RxList<Cancion>(
+      data.map((e) => Cancion.fromMap(e)).toList(),
+    );
+
+    return cancionesList;
+  }
+
   Future<bool> cargarcanciones() async {
     final datas = await audioquery.querySongs(
       ignoreCase: true,
@@ -74,7 +84,7 @@ class PlayerController extends GetxController {
       sortType: null,
       uriType: UriType.EXTERNAL,
     );
-    final data = datas.where((e) => e.duration != null);
+    final data = datas.where((e) => e.duration != null && e.duration! > 0);
     try {
       for (var song in data) {
         final datamap = Cancion(
@@ -83,10 +93,10 @@ class PlayerController extends GetxController {
             displayName: song.displayName,
             artista: song.artist.toString(),
             album: song.album.toString(),
-            genero: song.genre.toString(),
-            datos: song.size.toString(),
-            hora: song.duration.toString(),
-            fecha: song.dateModified.toString(),
+            genero: song.genre == null ? "<Unknown>" : song.genre.toString(),
+            datos: bytestomegabytes(song.size),
+            hora: formatDuration(Duration(milliseconds: song.duration!)),
+            fecha: intToFormattedDate(song.dateModified!),
             ruta: song.data,
             uri: song.uri.toString(),
             imagen: '',
@@ -139,15 +149,18 @@ class PlayerController extends GetxController {
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
 
-  void convertirSegundos(int segundos) {
-    int minutos = segundos ~/ 60; 
-    int segundosRestantes = segundos % 60; 
+  String bytestomegabytes(int bytes) {
+    const double megabytfactor = 1.0 / (1024 * 1024);
+    double megabytes = bytes * megabytfactor;
+    return "${double.parse(megabytes.toStringAsFixed(2)).toString()} MB";
+  }
 
-    double minutosDecimal = minutos + (segundosRestantes / 60);
-
-    debugPrint(
-        'El número $segundos se convierte a $minutos minutos y $segundosRestantes segundos.');
-    debugPrint('En formato 2.18 minutos: $minutosDecimal minutos');
+  String intToFormattedDate(int secondsSinceEpoch) {
+    DateTime fecha =
+        DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch * 1000);
+    String formattedDate =
+        "${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}";
+    return formattedDate;
   }
 
   changeDurationToSeconds(seconds) {
@@ -229,6 +242,18 @@ class PlayerController extends GetxController {
       reproduccion(true);
       updatePosition();
       isfavoritos(id);
+      audioPlayer.playerStateStream.listen((playerState) {
+        if (playerState.processingState == ProcessingState.completed) {
+          if (index == data.length - 1) {
+            playsong(
+                data[0].uri, 0, data[0].id, data[0].displayNameWOExt, data);
+          } else {
+            var nextindex = index + 1;
+            playsong(data[nextindex].uri, nextindex, data[nextindex].id,
+                data[nextindex].displayNameWOExt, data);
+          }
+        }
+      });
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
@@ -331,10 +356,11 @@ class PlayerController extends GetxController {
             data.map((e) => Genero(id: e.id, genero: e.genre)).toList()));
   }
 
-  Future<void> cargarsongtype(String id, String type) async {
-    if (type == "album") {
-    } else if (type == "artista") {
-    } else {}
+  Future<void> cargarsongtype(String nombre, String type) async {
+    await funciones.cargarsongtype(nombre, type).then((data) {
+      canciones.clear();
+      canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList());
+    });
   }
 
   Future<void> cargarlistadeplaylist() async {
@@ -432,5 +458,15 @@ class PlayerController extends GetxController {
                 colorText: Colors.white)
             : Get.snackbar("Opps!", "Ocurrio un problema",
                 colorText: Colors.white));
+  }
+
+  Future<void> filtersong({required String search}) async {
+    if (search == "") {
+      await funciones.mostrarsongdatabase().then((data) =>
+          canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+    }else{
+       final data = await funciones.filtersongdb(search);
+    canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList());
+    }
   }
 }

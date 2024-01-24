@@ -2,100 +2,121 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_music/components/bottomsheet_opcion_song.dart';
-import 'package:my_music/controller/controller_settings.dart';
 import 'package:my_music/controller/player_controller.dart';
+import 'package:my_music/settings/Utils/fondo.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../components/barmenu.dart';
-import 'filtersearch.dart';
+import '../../components/bottomsheet_opcion_song.dart';
+import 'index.dart';
 
-class Music extends StatefulWidget {
-  const Music({super.key});
+class FilterSongScreen extends StatefulWidget {
+  const FilterSongScreen({super.key});
 
   @override
-  State<Music> createState() => _MusicState();
+  State<FilterSongScreen> createState() => _FilterSongScreenState();
 }
 
-class _MusicState extends State<Music> {
+class _FilterSongScreenState extends State<FilterSongScreen> {
+  final searchtext = TextEditingController();
   final controller = Get.put(PlayerController());
-  final controller2 = Get.put(ControllerSet());
-
-  @override
-  void initState() {
-    controller2.iniciarstackmode();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(0, 36, 37, 82),
-      appBar: AppBar(
-        toolbarHeight: 80,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        title: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
-          child: Text(
-            "My Music",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: "Poppins",
-              color: Colors.white,
-              fontSize: 30,
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.to(() => const FilterSongScreen(),
-                  transition: Transition.rightToLeft);
-            },
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 36,
-            ),
-          ),
-        ],
-      ),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
+          const Align(
+            alignment: Alignment.center,
+            child: Fondo(),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              height: 120,
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: IconButton(
+                      onPressed: () {
+                        Get.to(() => const Index(),
+                            transition: Transition.rightToLeft);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      style: const TextStyle(
+                        fontFamily: "Poppins",
+                        color: Colors.white,
+                      ),
+                      controller: searchtext,
+                      onChanged: (value) {
+                        setState(() {
+                          value = searchtext.text;
+                          controller.filtersong(search: searchtext.text);
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Buscar la cancion ",
+                        labelStyle: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                        ),
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Positioned(
-            top: 50,
+            top: 120,
             bottom: 0,
             right: 0,
             left: 0,
             child: SizedBox(
               child: FutureBuilder(
-                future: controller.mostrarcanciones(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                future: controller.filtersong(search: searchtext.text),
+                builder: (context, snapshop) {
+                  if (snapshop.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: Text(
-                        "Cargando Canciones del dispositivo",
+                        "Cargando",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: "Poppins",
-                          fontSize: 20,
                           color: Colors.white,
+                          fontSize: 25,
                         ),
                       ),
                     );
-                  } else if (snapshot.hasData || snapshot.error != null) {
+                  } else if (snapshop.hasData || snapshop.error != null) {
                     return const Center(
-                      child: Text(
-                        "No se encontraron canciones en el dispositivo",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
+                        child: Text(
+                      "no se encontro ninguna cancion",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        color: Colors.white,
+                        fontSize: 25,
                       ),
-                    );
+                    ));
                   } else {
                     return Obx(
                       () => ListView.builder(
@@ -189,13 +210,22 @@ class _MusicState extends State<Music> {
                                   color: Colors.white,
                                 ),
                               ),
-                              onTap: () {
+                              onTap: () async {
+                                final canciones =
+                                    await controller.mostrarsong();
+                                final selectedSong =
+                                    controller.canciones[index];
+                                final selectedSongIndex = canciones.indexWhere(
+                                    (song) =>
+                                        song.displayNameWOExt ==
+                                        selectedSong.displayNameWOExt);
+
                                 controller.playsong(
-                                  controller.canciones[index].uri,
-                                  index,
-                                  controller.canciones[index].id,
-                                  controller.canciones[index].displayNameWOExt,
-                                  controller.canciones,
+                                  selectedSong.uri,
+                                  selectedSongIndex,
+                                  selectedSong.id,
+                                  selectedSong.displayNameWOExt,
+                                  canciones,
                                 );
                               },
                             ),
