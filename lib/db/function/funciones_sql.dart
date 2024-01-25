@@ -209,13 +209,32 @@ class FuncionesSQL {
 
   Future<List<Map<String, dynamic>>> filtersongdb(String nombre) async {
     Database? mydb = await dbcre.db;
-      final data = await mydb!.query(
-        "canciones",
-        where:
-            'displayNameWOExt LIKE ? OR artista LIKE ? OR album LIKE ? OR genero LIKE ?',
-        whereArgs: List.generate(4, (index) => '%$nombre%'),
-      );
-      return data;
-    
+    final data = await mydb!.query(
+      "canciones",
+      where:
+          'displayNameWOExt LIKE ? OR artista LIKE ? OR album LIKE ? OR genero LIKE ?',
+      whereArgs: List.generate(4, (index) => '%$nombre%'),
+    );
+    return data;
+  }
+
+  Future<List<Map<String, dynamic>>> buscarporfecha() async {
+    Database? mydb = await dbcre.db;
+    DateTime fechaActual = DateTime.now();
+
+    DateTime fechaInicio =
+        DateTime(fechaActual.year, fechaActual.month - 5, fechaActual.day);
+
+    String fechaInicioStr =
+        "${fechaInicio.day.toString().padLeft(2, '0')}/${fechaInicio.month.toString().padLeft(2, '0')}/${fechaInicio.year.toString()}";
+    String fechaActualStr =
+        "${fechaActual.day.toString().padLeft(2, '0')}/${fechaActual.month.toString().padLeft(2, '0')}/${fechaActual.year.toString()}";
+
+    final result = await mydb!.rawQuery(
+      "SELECT * FROM canciones WHERE fecha BETWEEN ? AND ?",
+      [fechaInicioStr, fechaActualStr],
+    );
+
+    return result;
   }
 }

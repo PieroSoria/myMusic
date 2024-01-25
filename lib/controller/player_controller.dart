@@ -469,4 +469,10 @@ class PlayerController extends GetxController {
       canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList());
     }
   }
+
+  Future<void> buscarporfechacanciones() async {
+    canciones.clear();
+    await funciones.buscarporfecha().then((data) =>
+        canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  }
 }

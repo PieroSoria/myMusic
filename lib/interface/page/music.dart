@@ -1,13 +1,11 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_music/components/bottomsheet_opcion_song.dart';
 import 'package:my_music/controller/controller_settings.dart';
 import 'package:my_music/controller/player_controller.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../components/barmenu.dart';
+import '../../components/songtype.dart';
 import 'filtersearch.dart';
 
 class Music extends StatefulWidget {
@@ -34,7 +32,6 @@ class _MusicState extends State<Music> {
       appBar: AppBar(
         toolbarHeight: 80,
         centerTitle: true,
-        
         backgroundColor: Colors.transparent,
         title: const Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
@@ -102,105 +99,7 @@ class _MusicState extends State<Music> {
                       () => ListView.builder(
                         itemCount: controller.canciones.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(73, 36, 37, 82),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              leading: Obx(() {
-                                String imagenPath =
-                                    controller.canciones[index].imagen;
-                                if (imagenPath != "") {
-                                  return Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      image: DecorationImage(
-                                          image: FileImage(File(imagenPath)),
-                                          fit: BoxFit.fill),
-                                    ),
-                                  );
-                                } else {
-                                  return QueryArtworkWidget(
-                                    id: int.parse(
-                                      controller.canciones[index].id,
-                                    ),
-                                    type: ArtworkType.AUDIO,
-                                    artworkFit: BoxFit.fill,
-                                    artworkBorder: BorderRadius.circular(6),
-                                    artworkHeight: 48,
-                                    artworkWidth: 48,
-                                    nullArtworkWidget: Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        image: const DecorationImage(
-                                          image: AssetImage(
-                                              'assets/image/shape.jpg'),
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }),
-                              title: Text(
-                                controller.canciones[index].displayNameWOExt,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: "Poppins",
-                                  fontSize: 16,
-                                ),
-                              ),
-                              subtitle: Text(
-                                controller.canciones[index].artista,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
-                                      ),
-                                      backgroundColor: const Color.fromARGB(
-                                          0, 194, 193, 193),
-                                      builder: (context) {
-                                        return BotomSheetSong(
-                                          cancion: controller.canciones[index],
-                                          index: index,
-                                          cambio: false,
-                                        );
-                                      });
-                                },
-                                icon: const Icon(
-                                  Icons.more_vert_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              onTap: () {
-                                controller.playsong(
-                                  controller.canciones[index].uri,
-                                  index,
-                                  controller.canciones[index].id,
-                                  controller.canciones[index].displayNameWOExt,
-                                  controller.canciones,
-                                );
-                              },
-                            ),
-                          );
+                          return SongType(index: index);
                         },
                       ),
                     );

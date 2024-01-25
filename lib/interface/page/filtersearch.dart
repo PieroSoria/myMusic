@@ -200,28 +200,27 @@ class _FilterSongScreenState extends State<FilterSongScreen> {
                                         await controller.mostrarsong();
                                     // ignore: use_build_context_synchronously
                                     showModalBottomSheet(
-                                        context: context,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(20)),
-                                        ),
-                                        backgroundColor: const Color.fromARGB(
-                                            0, 194, 193, 193),
-                                        builder: (context) {
-                                          final selectedSong =
-                                              controller.canciones[index];
-                                          final selectedSongIndex =
-                                              canciones.indexWhere((song) =>
-                                                  song.displayNameWOExt ==
-                                                  selectedSong
-                                                      .displayNameWOExt);
-                                          return BotomSheetSong(
-                                            cancion:
-                                                controller.canciones[index],
-                                            index: selectedSongIndex,
-                                            cambio: false,
-                                          );
-                                        });
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
+                                      ),
+                                      backgroundColor: const Color.fromARGB(
+                                          0, 194, 193, 193),
+                                      builder: (context) {
+                                        final selectedSong =
+                                            controller.canciones[index];
+                                        final selectedSongIndex =
+                                            canciones.indexWhere((song) =>
+                                                song.displayNameWOExt ==
+                                                selectedSong.displayNameWOExt);
+                                        return BotomSheetSong(
+                                          cancion: controller.canciones[index],
+                                          index: selectedSongIndex,
+                                          cambio: false,
+                                        );
+                                      },
+                                    );
                                   },
                                   icon: const Icon(
                                     Icons.more_vert_outlined,
@@ -229,12 +228,12 @@ class _FilterSongScreenState extends State<FilterSongScreen> {
                                   ),
                                 ),
                                 onTap: () async {
-                                  final canciones =
+                                  final cancions =
                                       await controller.mostrarsong();
                                   final selectedSong =
-                                      controller.canciones[index];
+                                      controller.cancions[index];
                                   final selectedSongIndex =
-                                      canciones.indexWhere((song) =>
+                                      cancions.indexWhere((song) =>
                                           song.displayNameWOExt ==
                                           selectedSong.displayNameWOExt);
 
@@ -243,7 +242,7 @@ class _FilterSongScreenState extends State<FilterSongScreen> {
                                     selectedSongIndex,
                                     selectedSong.id,
                                     selectedSong.displayNameWOExt,
-                                    canciones,
+                                    cancions,
                                   );
                                 },
                               ),
