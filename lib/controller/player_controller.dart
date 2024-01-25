@@ -21,6 +21,7 @@ class PlayerController extends GetxController {
   Rx<Uint8List?> artworkImage = Rx<Uint8List?>(null);
 
   RxList<Cancion> canciones = <Cancion>[].obs;
+  RxList<Cancion> favoritas = <Cancion>[].obs;
 
   RxBool isPlaying = false.obs;
   RxBool reproduccion = false.obs;
@@ -314,10 +315,9 @@ class PlayerController extends GetxController {
     }
   }
 
-  void cancionesfavoritas() async {
-    canciones.clear();
-    funciones.cancionesfavoritas().then((data) =>
-        canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
+  Future<void> cancionesfavoritas() async {
+    await funciones.cancionesfavoritas().then((data) =>
+        favoritas.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
   }
 
   Future<void> cargadealbumes() async {
@@ -464,9 +464,9 @@ class PlayerController extends GetxController {
     if (search == "") {
       await funciones.mostrarsongdatabase().then((data) =>
           canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList()));
-    }else{
-       final data = await funciones.filtersongdb(search);
-    canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList());
+    } else {
+      final data = await funciones.filtersongdb(search);
+      canciones.assignAll(data.map((e) => Cancion.fromMap(e)).toList());
     }
   }
 }

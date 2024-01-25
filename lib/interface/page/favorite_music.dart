@@ -19,7 +19,6 @@ class _FavoritosState extends State<Favoritos> {
 
   @override
   void initState() {
-    controller.cancionesfavoritas();
     super.initState();
   }
 
@@ -48,7 +47,7 @@ class _FavoritosState extends State<Favoritos> {
             left: 0,
             child: SizedBox(
               child: FutureBuilder(
-                future: controller.mostrarcanciones(),
+                future: controller.cancionesfavoritas(),
                 builder: (context, snapshop) {
                   if (snapshop.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -75,7 +74,7 @@ class _FavoritosState extends State<Favoritos> {
                   } else {
                     return Obx(
                       () => ListView.builder(
-                        itemCount: controller.canciones.length,
+                        itemCount: controller.favoritas.length,
                         itemBuilder: (context, index) {
                           return Container(
                             margin: const EdgeInsets.all(4),
@@ -89,7 +88,7 @@ class _FavoritosState extends State<Favoritos> {
                               ),
                               leading: Obx(() {
                                 String imagenPath =
-                                    controller.canciones[index].imagen;
+                                    controller.favoritas[index].imagen;
                                 if (imagenPath != "") {
                                   return Container(
                                     width: 48,
@@ -104,7 +103,7 @@ class _FavoritosState extends State<Favoritos> {
                                 } else {
                                   return QueryArtworkWidget(
                                     id: int.parse(
-                                        controller.canciones[index].id),
+                                        controller.favoritas[index].id),
                                     type: ArtworkType.AUDIO,
                                     artworkFit: BoxFit.fill,
                                     artworkBorder: BorderRadius.circular(6),
@@ -126,25 +125,25 @@ class _FavoritosState extends State<Favoritos> {
                                 }
                               }),
                               title: Text(
-                                controller.canciones[index].displayNameWOExt,
+                                controller.favoritas[index].displayNameWOExt,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: const TextStyle(color: Colors.white),
                               ),
                               subtitle: Text(
-                                controller.canciones[index].artista,
+                                controller.favoritas[index].artista,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: const TextStyle(color: Colors.white),
                               ),
                               onTap: () {
                                 controller.playsong(
-                                    controller.canciones[index].uri,
+                                    controller.favoritas[index].uri,
                                     index,
-                                    controller.canciones[index].id,
+                                    controller.favoritas[index].id,
                                     controller
-                                        .canciones[index].displayNameWOExt,
-                                    controller.canciones);
+                                        .favoritas[index].displayNameWOExt,
+                                    controller.favoritas);
                               },
                             ),
                           );
